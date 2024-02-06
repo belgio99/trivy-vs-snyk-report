@@ -1,0 +1,31 @@
+{
+   "name": "LaTeX Project",
+   "image": "qmcgaw/latexdevcontainer:latest",
+   "customizations": {
+      "vscode": {
+         "extensions": [
+            "James-Yu.latex-workshop"
+         ],
+         "settings": {
+            "latex-workshop.latex.autoBuild.run": "onSave",
+            "files.eol": "\n",
+                // Latex settings
+                "latex-workshop.linting.chktex.enabled": true,
+                "latex-workshop.linting.chktex.exec.path": "chktex",
+                "latex-workshop.latex.clean.subfolder.enabled": true,
+                "latex-workshop.latex.autoClean.run": "onBuilt",
+                "editor.formatOnSave": true,
+                "files.associations": {
+                    "*.tex": "latex"
+                },
+                "latex-workshop.latexindent.path": "latexindent",
+                "latex-workshop.latexindent.args": [
+                    "-c",
+                    "%DIR%/",
+                    "%TMPFILE%",
+                    "-y=defaultIndent: '%INDENT%'"
+                ]
+         }
+      }
+   }
+}
