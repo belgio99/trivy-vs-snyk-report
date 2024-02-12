@@ -1,6 +1,6 @@
 {
    "name": "LaTeX Project",
-   "image": "qmcgaw/latexdevcontainer:latest",
+   "image": "qmcgaw/latexdevcontainer:latest-full",
    "customizations": {
       "vscode": {
          "extensions": [
