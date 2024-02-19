@@ -8,37 +8,120 @@ L'aggiornamento dei database avviene per ogni tool in modo differente. Trivy, in
 
 Le immagini Docker sottoposte a scansione sono state selezionate in base alla loro popolarità e alla loro rilevanza nel panorama delle applicazioni e dei servizi cloud. In particolare, si è scelto di testare le seguenti immagini:
 \begin{itemize}
-   \item \textbf{nginx}: uno dei più popolari server web e reverse proxy.
+   \item \textbf{nginx}: uno dei principali server web e reverse proxy.
    \item \textbf{mongo}: database NoSQL flessibile e scalabile basato su MongoDB.
-   \item \textbf{wordpress}: piattaforma di blogging e CMS basata.
-   \item \textbf{alpine}: una delle immagini di container più leggere e minimali, basata su Alpine Linux, che offre un ambiente di esecuzione ideale per applicazioni e servizi cloud.
-   \item \textbf{centos}: una delle immagini di container più stabili e affidabili, basata su CentOS, che offre un ambiente di esecuzione robusto e ben supportato per applicazioni e servizi cloud.
+   \item \textbf{wordpress}: piattaforma di blogging e CMS.
+   \item \textbf{alpine}: una delle immagini di container più leggere e minimali, basata su Alpine Linux. È ampiamente usata come base per altre immagini di container.
+   \item \textbf{node}: ambiente di esecuzione per JavaScript basato su Chrome V8.
 \end{itemize}
 In particolare, si è voluto testare due tipi di versioni: la versione più recente, e una versione più datata. Nella tabella \ref{tab:scan_results} sono riportati i risultati ottenuti da entrambi i tool per ciascuna immagine testata.
-\begin{table}[h]
+\begin{table}[H]
    \centering
    \begin{tabularx}{\textwidth}{|l|l|X|X|X|X|X|X|X|X|}
       \hline
       \textbf{Immagine}          & \textbf{Vers.} & \multicolumn{4}{c|}{\textbf{Snyk}} & \multicolumn{4}{c|}{\textbf{Trivy}}                                                                                              \\ \cline{3-10}
                                  &                & \textbf{Crit.}                     & \textbf{High}                       & \textbf{Mid} & \textbf{Low} & \textbf{Crit.} & \textbf{High} & \textbf{Mid} & \textbf{Low} \\ \hline
-      \multirow{2}{*}{nginx}     & latest         & 0                                  & 1                                   & 2            & 3            & 2              & 16            & 34           & 83           \\ \cline{2-10}
+      \multirow{2}{*}{nginx}     & latest         & 1                                  & 6                                   & 3            & 78           & 2              & 16            & 34           & 83           \\ \cline{2-10}
                                  & v1.23.0        & 10                                 & 39                                  & 73           & 111          & 16             & 80            & 139          & 115          \\ \hline
-      \multirow{2}{*}{mongo}     & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 1            & 21            \\ \cline{2-10}
-                                 & v4.4.3         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
-      \multirow{2}{*}{wordpress} & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \cline{2-10}
-                                 & v6.0.0         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
+      \multirow{2}{*}{mongo}     & latest         & 0                                  & 0                                   & 1            & 12           & 0              & 0             & 1            & 21           \\ \cline{2-10}
+                                 & v4.4.3         & 0                                  & 7                                   & 88           & 69           & 0              & 13            & 195          & 105          \\ \hline
+      \multirow{2}{*}{wordpress} & latest         & 1                                  & 1                                   & 3            & 150          & 3              & 50            & 143          & 326          \\ \cline{2-10}
+                                 & v6.0.0         & 23                                 & 66                                  & 142          & 228          & 49             & 340           & 509          & 547          \\ \hline
       \multirow{2}{*}{alpine}    & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \cline{2-10}
-                                 & v3.11          & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
-      \multirow{2}{*}{node}      & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \cline{2-10}
-                                 & v16.0.0        & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
+                                 & v3.11          & 1                                  & 0                                   & 0            & 0            & 1              & 0             & 0            & 0            \\ \hline
+      \multirow{2}{*}{node}      & latest         & 1                                  & 4                                   & 3            & 160          & 5              & 73            & 246          & 481          \\ \cline{2-10}
+                                 & v16.0.0        & 48                                 & 183                                 & 275          & 390          & 140            & 970           & 1353         & 1417         \\ \hline
    \end{tabularx}
-   \caption{Confronto tra strumenti per la sicurezza delle immagini Docker}
-   \label{tab:confronto_sicurezza}
+   \caption{Risultati delle scansioni di Snyk e Trivy per ciascuna immagine testata.}
+   \label{tab:scan_results}
 \end{table}
+\subsection{Risultati delle scansioni}
+Dai risultati ottenuti, si evincono le seguenti considerazioni:
+\subsubsection{Numero di vulnerabilità rilevate}
+Trivy generalmente avvisa di un numero maggiore di vulnerabilità rispetto a Snyk. Questo è particolarmente evidente per le versioni più datate delle immagini, dove Trivy rileva un numero significativamente maggiore di vulnerabilità. Da solo, il mero numero di vulnerabilità rilevate non è un indicatore della qualità o dell'accuratezza delle scansioni, per via della presenza di eventuali falsi positivi o di vulnerabilità non rilevate.
+
+
+\subsubsection{Differenza nella classificazione delle stesse vulnerabilità}
+Gli strumenti hanno riportato, in molti casi, una differenza nelle classificazioni delle stesse vulnerabilità. Questo è dovuto alla differenza di valutazione delle vulnerabilità da parte dei database utilizzati. In particolare, Snyk tende a classificare le vulnerabilità in modo più conservativo, assegnando un numero inferiore di vulnerabilità di livello critico e alto rispetto a Trivy. Ad esempio, per l'immagine \texttt{nginx:latest}, entrambi i tool hanno rilevato correttamente la vulnerabilità CVE-2023-6879, relativa ad un buffer overflow presente nella libreria \texttt{AOMedia}, ma mentre Trivy ha classificato la vulnerabilità come di livello critico, Snyk ha classificato la stessa come di livello basso. Questa differenza è dovuta alle sorgenti di informazioni di valutazione utilizzate dai due tool:
+\begin{itemize}
+   \item Trivy utilizza la classificazione NVD, che è nota per essere meno conservativa nella classificazione delle vulnerabilità, assegnando quindi un numero maggiore di vulnerabilità di livello critico o alto.
+   \item Snyk invece assegna la categoria in base a tre elementi di valutazione:
+         \begin{itemize}
+            \item L'analisi interna condotta dal team di Snyk.
+            \item Una valutazione della gravità fornita dal team di sicurezza del manutentore della distribuzione Linux.
+            \item La gravità della vulnerabilità secondo il database NVD.
+         \end{itemize}
+\end{itemize}
+Visitando infatti il sito web \texttt{security-tracker.debian.org}, è possibile osservare che la vulnerabilità CVE-2023-6879 è stata classificata come di livello basso dal team di sicurezza di Debian, e questo ha influenzato in modo predominante la classificazione di Snyk.
+\subsection{Formati di output}
+Entrambi gli strumenti offrono la possibilità di generare report in vari formati per permetterne, ad esempio, l'integrazione diretta con altri strumenti.
+\subsubsection{Trivy}
+Il formato di output di default di Trivy è il formato tabulare (Figura \ref{fig:trivy_output_fmt}), che fornisce un report strutturato e facilmente leggibile delle vulnerabilità rilevate.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=1\textwidth]{immagini/capitolo2/trivy_output_fmt.png}
+   \caption{Formato di output di default di Trivy}
+   \label{fig:trivy_output_fmt}
+\end{figure}
+Inoltre, Trivy permette di generare report nei seguenti formati:
+\begin{itemize}
+   \item \textbf{JSON}
+   \item \textbf{JUnit XML}: un formato di output standard per i risultati dei test.
+   \item \textbf{Sarif}: un formato di output standard per gli strumenti di analisi statica del codice.
+   \item \textbf{Personalizzato}: se i formati predefiniti non soddisfano le esigenze, è possibile specificare un formato di output completamente personalizzato.
+\end{itemize}
+
+\subsubsection{Snyk}
+Nel formato di default, Snyk restituisce un report in formato "lista" (Figura \ref{fig:snyk_output_fmt}), con l'elenco di tutte le vulnerabilità rilevate.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=1\textwidth]{immagini/capitolo2/snyk_output_fmt.png}
+   \caption{Formato di output di default di Snyk}
+   \label{fig:snyk_output_fmt}
+\end{figure}
+
+Inoltre, vengono mostrati anche:
+\begin{itemize}
+   \item Il numero totale di vulnerabilità rilevate.
+   \item \textbf{Consigli per la base image}: Snyk propone una base image successiva o alternativa, per notificare l'utente che aggiornando la base image alcune delle vulnerabilità rilevate siano state risolte (Figura \ref{fig:snyk_altn_imgs}).
+         \begin{figure}[H]
+            \centering
+            \includegraphics[width=1\textwidth]{immagini/capitolo2/snyk_altn_images.png}
+            \caption{Snyk: Consigli per una base image alternativa.}
+            \label{fig:snyk_altn_imgs}
+         \end{figure}
+\end{itemize}
+
+Inoltre, Snyk permette di generare report nei seguenti formati:
+\begin{itemize}
+   \item \textbf{JSON}
+   \item \textbf{SARIF}
+\end{itemize}
+
+Differentemente da Trivy, Snyk non permette di generare report in formati tabellari o personalizzati.
 
 \section{Scansione di configurazioni IaC}
-Un'altra funzionalità offerta da entrambi i tool è relativa alla scansione di configurazioni IaC, al fine di rilevare problemi di sicurezza o cattive pratiche di configurazione. Per testare tale funzionalità, si è utilizzato un campione di file di configurazione di Terraform, appropriatamente configurato con una vulnerabilità di esempio nota e ben documentata. Questa vulnerabilità è rappresentata dalla configurazione errata delle politiche di accesso su un bucket S3 di AWS, il quale è stato impostato per permettere l'accesso in lettura al pubblico di tutto il bucket (public-read). Tale configurazione espone i dati contenuti nel bucket a potenziali accessi non autorizzati, rappresentando un rischio significativo per la sicurezza dei dati.
-Eseguendo la scansione del file con entrambi gli strumenti, sono state rilevate le seguenti vulnerabilità:
+Un'altra funzionalità offerta da entrambi i tool è relativa alla scansione di configurazioni IaC, al fine di rilevare problemi di sicurezza o cattive pratiche di configurazione. Per testare tale funzionalità, si è utilizzato un campione di file di configurazione di Terraform, appropriatamente configurato con una vulnerabilità di esempio nota e ben documentata. Il codice in questione è il seguente:
+\begin{lstlisting}
+   provider "aws" {
+      region = "us-east-1"
+    }
+    
+    resource "aws_s3_bucket" "bucket_insecure" {
+      bucket = "my-insecure-bucket"
+      acl    = "public-read"
+    
+      tags = {
+        Name        = "Insecure Bucket"
+        Environment = "Test"
+      }
+    }
+    
+\end{lstlisting}
+
+
+La vulnerabilità in questione è rappresentata dalla configurazione errata delle politiche di accesso su un bucket S3 di AWS, il quale è stato impostato per permettere l'accesso in lettura al pubblico di tutto il bucket (public-read). Tale configurazione espone i dati contenuti nel bucket a potenziali accessi non autorizzati, rappresentando un rischio significativo per la sicurezza dei dati.
+Eseguendo la scansione del codice soprastante con entrambi gli strumenti, sono state rilevate le seguenti vulnerabilità:
 
 \begin{center}
    \begin{tabularx}{0.8\textwidth}{|X|X|X|X|X|}
@@ -52,11 +135,7 @@ Eseguendo la scansione del file con entrambi gli strumenti, sono state rilevate 
    \end{tabularx}
 \end{center}
 
-
-Come è possibile rilevare dal grafico, la scansione con Trivy ha rilevato un numero maggiore di vulnerabilità rispetto a Snyk, in particolare un numero maggiore di vulnerabilità di livello alto.
-Entrambi i tool sono stati in grado di identificare correttamente la vulnerabilità desiderata, nonostante il grado di gravità assegnato sia risultato differente.
-
-
+Tra le vulnerabilità rilevate, in entrambi i casi
 
 \section{Differenze di funzionalità}
 Durante il testing, sono state rilevate le seguenti funzionalità uniche per ciascuno strumento:

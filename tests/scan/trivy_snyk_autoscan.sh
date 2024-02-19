@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a arr=("mongo:latest" "mongo:4.4.3" "wordpress:latest" "wordpress:6.0.0" "alpine:latest" "alpine:3.11" "node:latest" "node:16.0.0")
+declare -a arr=("nginx:latest" "nginx:1.23.0" mongo:latest" "mongo:4.4.3" "wordpress:latest" "wordpress:6.0.0" "alpine:latest" "alpine:3.11" "node:latest" "node:16.0.0)
 
 for i in "${arr[@]}"
 do
