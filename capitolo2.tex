@@ -1,20 +1,62 @@
 \chapter{Confronto}
-\section{Il database}
-Il database di entrambi gli strumenti è un aspetto cruciale per la qualità e l'accuratezza delle analisi di vulnerabilità. Trivy e Snyk utilizzano database di vulnerabilità differenti, che influenzano la loro capacità di identificare e classificare le vulnerabilità. Trivy si basa su VulnDB, un database di vulnerabilità curato da Risk Based Security, che offre una copertura dettagliata e aggiornata delle vulnerabilità di sicurezza. Snyk, d'altro canto, utilizza un database di vulnerabilità proprietario, che combina dati provenienti da diverse fonti, inclusi i database NVD, NPM, RubyGems e altri. Questo approccio permette a Snyk di offrire una copertura più ampia e dettagliata delle vulnerabilità, ma può comportare un rischio di falsi positivi e falsi negativi, a causa della complessità e della varietà dei dati raccolti. Trivy, invece, offre una copertura più limitata, ma più accurata e affidabile, grazie alla cura e all'attenzione dedicata da Risk Based Security alla qualità dei dati e alla loro classificazione.
+\section{Scansione delle vulnerabilità}
+Il database di entrambi gli strumenti è un aspetto cruciale per la qualità e l'accuratezza delle analisi di vulnerabilità. Trivy e Snyk utilizzano database di vulnerabilità differenti, che influenzano la loro capacità di identificare e classificare le vulnerabilità.
+
+
 In questa parte di testing, si è voluto valutare la capacità di Trivy e Snyk di identificare e classificare le vulnerabilità in base al database utilizzato. Per fare ciò, si è utilizzato un campione di immagini di container e repository Git, contenenti vulnerabilità note e ben documentate, e si è confrontato il risultato delle scansioni di Trivy e Snyk con le informazioni disponibili nei database VulnDB e Snyk. I risultati di questo test sono stati valutati in base alla precisione, alla completezza e alla tempestività delle informazioni fornite da Trivy e Snyk, e alla loro capacità di identificare e classificare le vulnerabilità in base al database utilizzato.
 L'aggiornamento dei database avviene per ogni tool in modo differente. Trivy, infatti, controlla la presenza di aggiornamenti del database ad ogni esecuzione, e scarica automaticamente la versione più recente. Snyk, invece, offre la possibilità di aggiornare manualmente il database, ma non è possibile controllare la presenza di aggiornamenti in modo automatico.
 
 Le immagini Docker sottoposte a scansione sono state selezionate in base alla loro popolarità e alla loro rilevanza nel panorama delle applicazioni e dei servizi cloud. In particolare, si è scelto di testare le seguenti immagini:
 \begin{itemize}
-   \item \textbf{nginx:latest}: una delle immagini di container più popolari e utilizzate, che offre un server web leggero e performante basato su Nginx.
-   \item \textbf{mongo:latest}: una delle immagini di container più popolari e utilizzate, che offre un database NoSQL flessibile e scalabile basato su MongoDB.
-   \item \textbf{wordpress:latest}: una delle immagini di container più popolari e utilizzate, che offre una piattaforma di blogging e CMS basata su WordPress.
-   \item \textbf{alpine:latest}: una delle immagini di container più leggere e minimali, basata su Alpine Linux, che offre un ambiente di esecuzione ideale per applicazioni e servizi cloud.
-   \item \textbf{centos:latest}: una delle immagini di container più stabili e affidabili, basata su CentOS, che offre un ambiente di esecuzione robusto e ben supportato per applicazioni e servizi cloud.
+   \item \textbf{nginx}: uno dei più popolari server web e reverse proxy.
+   \item \textbf{mongo}: database NoSQL flessibile e scalabile basato su MongoDB.
+   \item \textbf{wordpress}: piattaforma di blogging e CMS basata.
+   \item \textbf{alpine}: una delle immagini di container più leggere e minimali, basata su Alpine Linux, che offre un ambiente di esecuzione ideale per applicazioni e servizi cloud.
+   \item \textbf{centos}: una delle immagini di container più stabili e affidabili, basata su CentOS, che offre un ambiente di esecuzione robusto e ben supportato per applicazioni e servizi cloud.
 \end{itemize}
-I risultati rilevati da entrambi i tool sono riportati nella tabella seguente:
-% Tabella da aggiungere successivamente
-\section{Utilizzo in pipeline CI/CD}
+In particolare, si è voluto testare due tipi di versioni: la versione più recente, e una versione più datata. Nella tabella \ref{tab:scan_results} sono riportati i risultati ottenuti da entrambi i tool per ciascuna immagine testata.
+\begin{table}[h]
+   \centering
+   \begin{tabularx}{\textwidth}{|l|l|X|X|X|X|X|X|X|X|}
+      \hline
+      \textbf{Immagine}          & \textbf{Vers.} & \multicolumn{4}{c|}{\textbf{Snyk}} & \multicolumn{4}{c|}{\textbf{Trivy}}                                                                                              \\ \cline{3-10}
+                                 &                & \textbf{Crit.}                     & \textbf{High}                       & \textbf{Mid} & \textbf{Low} & \textbf{Crit.} & \textbf{High} & \textbf{Mid} & \textbf{Low} \\ \hline
+      \multirow{2}{*}{nginx}     & latest         & 0                                  & 1                                   & 2            & 3            & 2              & 16            & 34           & 83           \\ \cline{2-10}
+                                 & v1.23.0        & 10                                 & 39                                  & 73           & 111          & 16             & 80            & 139          & 115          \\ \hline
+      \multirow{2}{*}{mongo}     & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 1            & 21            \\ \cline{2-10}
+                                 & v4.4.3         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
+      \multirow{2}{*}{wordpress} & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \cline{2-10}
+                                 & v6.0.0         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
+      \multirow{2}{*}{alpine}    & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \cline{2-10}
+                                 & v3.11          & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
+      \multirow{2}{*}{node}      & latest         & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \cline{2-10}
+                                 & v16.0.0        & 0                                  & 0                                   & 0            & 0            & 0              & 0             & 0            & 0            \\ \hline
+   \end{tabularx}
+   \caption{Confronto tra strumenti per la sicurezza delle immagini Docker}
+   \label{tab:confronto_sicurezza}
+\end{table}
+
+\section{Scansione di configurazioni IaC}
+Un'altra funzionalità offerta da entrambi i tool è relativa alla scansione di configurazioni IaC, al fine di rilevare problemi di sicurezza o cattive pratiche di configurazione. Per testare tale funzionalità, si è utilizzato un campione di file di configurazione di Terraform, appropriatamente configurato con una vulnerabilità di esempio nota e ben documentata. Questa vulnerabilità è rappresentata dalla configurazione errata delle politiche di accesso su un bucket S3 di AWS, il quale è stato impostato per permettere l'accesso in lettura al pubblico di tutto il bucket (public-read). Tale configurazione espone i dati contenuti nel bucket a potenziali accessi non autorizzati, rappresentando un rischio significativo per la sicurezza dei dati.
+Eseguendo la scansione del file con entrambi gli strumenti, sono state rilevate le seguenti vulnerabilità:
+
+\begin{center}
+   \begin{tabularx}{0.8\textwidth}{|X|X|X|X|X|}
+      \hline
+      \textbf{Strumento} & \textbf{Critical} & \textbf{High} & \textbf{Medium} & \textbf{Low} \\
+      \hline
+      Snyk               & 0                 & 0             & 1               & 3            \\
+      \hline
+      Trivy              & 0                 & 7             & 1               & 2            \\
+      \hline
+   \end{tabularx}
+\end{center}
+
+
+Come è possibile rilevare dal grafico, la scansione con Trivy ha rilevato un numero maggiore di vulnerabilità rispetto a Snyk, in particolare un numero maggiore di vulnerabilità di livello alto.
+Entrambi i tool sono stati in grado di identificare correttamente la vulnerabilità desiderata, nonostante il grado di gravità assegnato sia risultato differente.
+
+
 
 \section{Differenze di funzionalità}
 Durante il testing, sono state rilevate le seguenti funzionalità uniche per ciascuno strumento:
@@ -22,6 +64,15 @@ Durante il testing, sono state rilevate le seguenti funzionalità uniche per cia
 Trivy offre la possibilità di eseguire la scansione di un intero cluster Kubernetes, identificando e classificando le vulnerabilità presenti nei pod, nei deployment e nei servizi. Questa funzionalità è particolarmente utile per i team di sicurezza e per gli amministratori di sistema, che possono utilizzare Trivy per identificare e mitigare le vulnerabilità in modo proattivo, prima che possano essere sfruttate da attaccanti. Durante il testing, si è verificato che Trivy è in grado di eseguire la scansione di un cluster Kubernetes in modo rapido ed efficiente, fornendo un report dettagliato delle vulnerabilità rilevate e delle azioni consigliate per mitigarle.
 \subsection{Trivy: Scansione delle Configurazioni Infrastructure as Code (IaC)}
 Trivy offre la possibilità di eseguire la scansione delle configurazioni Infrastructure as Code (IaC), identificando e classificando le vulnerabilità presenti nei file di configurazione di Terraform, CloudFormation e altri strumenti di automazione dell'infrastruttura. Questa funzionalità è particolarmente utile per i team di sviluppo e per gli amministratori di sistema, che possono utilizzare Trivy per identificare e mitigare le vulnerabilità nelle configurazioni IaC, prima che possano essere sfruttate da attaccanti. Durante il testing, si è verificato che Trivy è in grado di eseguire la scansione delle configurazioni IaC in modo rapido ed efficiente, fornendo un report dettagliato delle vulnerabilità rilevate e delle azioni consigliate per mitigarle.
+
+Per testare tale funzionalità, si è utilizzato un campione di file di configurazione di Terraform, appropriamente configurato con una vulnerabilità di esempio nota e ben documentata. Questa vulnerabilità è rappresentata dalla configurazione errata delle politiche di accesso su un bucket S3 di AWS, il quale è stato impostato per permettere l'accesso in lettura al pubblico (public-read). Tale configurazione espone i dati contenuti nel bucket a potenziali accessi non autorizzati, rappresentando un rischio significativo per la sicurezza dei dati.
+Come è possibile osservare dalla figura \ref{fig:trivy_iac}, Trivy è stato in grado di identificare e classificare correttamente la vulnerabilità presente nella configurazione di Terraform, fornendo un report dettagliato delle azioni consigliate per mitigarla.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.6\textwidth]{immagini/capitolo2/trivy_iac.png}
+   \caption{Risultato della scansione delle configurazioni IaC con Trivy}
+   \label{fig:trivy_iac}
+\end{figure}
 \subsection{Trivy:}
 
 \subsection{Snyk: Monitoraggio Continuo}
