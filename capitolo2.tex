@@ -8,11 +8,11 @@ L'aggiornamento dei database avviene per ogni tool in modo differente. Trivy, in
 
 Le immagini Docker sottoposte a scansione sono state selezionate in base alla loro popolarità e alla loro rilevanza nel panorama delle applicazioni e dei servizi cloud. In particolare, si è scelto di testare le seguenti immagini:
 \begin{itemize}
-   \item \textbf{nginx}: uno dei principali server web e reverse proxy.
-   \item \textbf{mongo}: database NoSQL flessibile e scalabile basato su MongoDB.
-   \item \textbf{wordpress}: piattaforma di blogging e CMS.
-   \item \textbf{alpine}: una delle immagini di container più leggere e minimali, basata su Alpine Linux. È ampiamente usata come base per altre immagini di container.
-   \item \textbf{node}: ambiente di esecuzione per JavaScript basato su Chrome V8.
+   \item\textbf{nginx}: uno dei principali server web e reverse proxy.
+   \item\textbf{mongo}: database NoSQL flessibile e scalabile basato su MongoDB.
+   \item\textbf{wordpress}: piattaforma di blogging e CMS.
+   \item\textbf{alpine}: una delle immagini di container più leggere e minimali, basata su Alpine Linux È ampiamente usata come base per altre immagini di container.
+   \item\textbf{node}: ambiente di esecuzione per JavaScript basato su Chrome V8.
 \end{itemize}
 In particolare, si è voluto testare due tipi di versioni: la versione più recente, e una versione più datata. Nella tabella \ref{tab:scan_results} sono riportati i risultati ottenuti da entrambi i tool per ciascuna immagine testata.
 \begin{table}[H]
@@ -53,6 +53,11 @@ Gli strumenti hanno riportato, in molti casi, una differenza nelle classificazio
          \end{itemize}
 \end{itemize}
 Visitando infatti il sito web \texttt{security-tracker.debian.org}, è possibile osservare che la vulnerabilità CVE-2023-6879 è stata classificata come di livello basso dal team di sicurezza di Debian, e questo ha influenzato in modo predominante la classificazione di Snyk.
+\subsubsection{Confermata di presenza di vulnerabilità ereditate}
+È stata inoltre confermata la presenza di vulnerabilità "ereditate" dalla Base Image: ad esempio, l'unica vulnerabilità che Snyk rileva come critica nell'ultima versione delle immagini \texttt{nginx, wordpress, node} è la stessa vulnerabilità CVE-2023-45853. Questa vulnerabilità è attualmente presente nel sistema Debian e relativa alla libreria \texttt{zlib}, ed è stata quindi ereditata dalle immagini Docker che utilizzano Debian come base image.
+Trivy riporta anch'esso che la vulnerabilità è critica, ma anche che ha uno stato \texttt{will\_not\_fix}. Ciò indica che tale vulnerabilità è conosciuta, ma al momento non ci sono piani per una correzione. Snyk non riporta invece tale informazione.
+
+
 \subsection{Formati di output}
 Entrambi gli strumenti offrono la possibilità di generare report in vari formati per permetterne, ad esempio, l'integrazione diretta con altri strumenti.
 \subsubsection{Trivy}
@@ -94,8 +99,8 @@ Inoltre, vengono mostrati anche:
 
 Inoltre, Snyk permette di generare report nei seguenti formati:
 \begin{itemize}
-   \item \textbf{JSON}
-   \item \textbf{SARIF}
+   \item\textbf{JSON}
+   \item\textbf{SARIF}
 \end{itemize}
 
 Differentemente da Trivy, Snyk non permette di generare report in formati tabellari o personalizzati.
@@ -135,24 +140,32 @@ Eseguendo la scansione del codice soprastante con entrambi gli strumenti, sono s
    \end{tabularx}
 \end{center}
 
-Tra le vulnerabilità rilevate, in entrambi i casi
+Tra le vulnerabilità rilevate, in entrambi i casi è stata rilevata la vulnerabilità desiderata. Su Snyk, la vulnerabilità è stata classificata come l'unica di livello medio. Trivy, invece, ha classificato la vulnerabilità come di livello alto. Questa differenza è dovuta alla diversa classificazione delle vulnerabilità da parte dei database utilizzati, come già discusso in precedenza.
+Le altre vulnerabilità di livello alto rilevate da Trivy sono state:
+\begin{itemize}
+   \item Quattro vulnerabilità molto simili tra loro, relative alla mancanza di ACLs sul bucket S3. (No public access block so not blocking public acls)
+   \item \textbf{Bucket does not have encryption enabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente la cifratura dei dati.
+   \item \textbf{Bucket does not encrypt data with a customer managed key:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha una configurazione per la cifratura dei dati con una chiave gestita dal cliente.
 
-\section{Differenze di funzionalità}
-Durante il testing, sono state rilevate le seguenti funzionalità uniche per ciascuno strumento:
-\subsection{Trivy: scansione di cluster Kubernetes}
-Trivy offre la possibilità di eseguire la scansione di un intero cluster Kubernetes, identificando e classificando le vulnerabilità presenti nei pod, nei deployment e nei servizi. Questa funzionalità è particolarmente utile per i team di sicurezza e per gli amministratori di sistema, che possono utilizzare Trivy per identificare e mitigare le vulnerabilità in modo proattivo, prima che possano essere sfruttate da attaccanti. Durante il testing, si è verificato che Trivy è in grado di eseguire la scansione di un cluster Kubernetes in modo rapido ed efficiente, fornendo un report dettagliato delle vulnerabilità rilevate e delle azioni consigliate per mitigarle.
-\subsection{Trivy: Scansione delle Configurazioni Infrastructure as Code (IaC)}
-Trivy offre la possibilità di eseguire la scansione delle configurazioni Infrastructure as Code (IaC), identificando e classificando le vulnerabilità presenti nei file di configurazione di Terraform, CloudFormation e altri strumenti di automazione dell'infrastruttura. Questa funzionalità è particolarmente utile per i team di sviluppo e per gli amministratori di sistema, che possono utilizzare Trivy per identificare e mitigare le vulnerabilità nelle configurazioni IaC, prima che possano essere sfruttate da attaccanti. Durante il testing, si è verificato che Trivy è in grado di eseguire la scansione delle configurazioni IaC in modo rapido ed efficiente, fornendo un report dettagliato delle vulnerabilità rilevate e delle azioni consigliate per mitigarle.
+\end{itemize}
 
-Per testare tale funzionalità, si è utilizzato un campione di file di configurazione di Terraform, appropriamente configurato con una vulnerabilità di esempio nota e ben documentata. Questa vulnerabilità è rappresentata dalla configurazione errata delle politiche di accesso su un bucket S3 di AWS, il quale è stato impostato per permettere l'accesso in lettura al pubblico (public-read). Tale configurazione espone i dati contenuti nel bucket a potenziali accessi non autorizzati, rappresentando un rischio significativo per la sicurezza dei dati.
-Come è possibile osservare dalla figura \ref{fig:trivy_iac}, Trivy è stato in grado di identificare e classificare correttamente la vulnerabilità presente nella configurazione di Terraform, fornendo un report dettagliato delle azioni consigliate per mitigarla.
 \begin{figure}[H]
    \centering
    \includegraphics[width=0.6\textwidth]{immagini/capitolo2/trivy_iac.png}
-   \caption{Risultato della scansione delle configurazioni IaC con Trivy}
+   \caption{Trivy: corretto riconoscimento della vulnerabilità public-read}
    \label{fig:trivy_iac}
 \end{figure}
-\subsection{Trivy:}
+
+Questi errori non sono stati rilevati da Snyk, che però ha rilevato due possibili vulnerabilità di livello basso non rilevate invece da Trivy:
+\begin{itemize}
+   \item \textbf{S3 bucket MFA delete control disabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente il controllo Multi-Factor Authentication per la cancellazione dei dati.
+   \item \textbf{S3 server access logging is disabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente il logging degli accessi al server.
+
+\end{itemize}
+
+
+\section{Funzionalità uniche per ogni prodotto}
+Durante il testing, sono state rilevate inoltre le funzionalità presenti in uno dei due strumenti, ma non nell'altro. Le funzionalità sono descritte di seguito. Essendo uniche per ogni prodotto, non è stato possibile confrontarle direttamente.
 
 \subsection{Snyk: Monitoraggio Continuo}
 Snyk offre un monitoraggio continuo delle applicazioni e delle dipendenze, inviando notifiche in tempo reale in caso di nuove vulnerabilità che influenzano il codice già in uso. Questo assicura che i team possano reagire rapidamente a nuove minacce. Durante il testing, è stato possibile osservare il funzionamento di questa funzione, avendo ricevuto e-mail contenenti nuove vulnerabilità pubblicate solamente giorni prima, come riportato in figura \ref{fig:snyk_email}.
@@ -164,4 +177,12 @@ Snyk offre un monitoraggio continuo delle applicazioni e delle dipendenze, invia
    \label{fig:snyk_email}
 \end{figure}
 
-Dopo la ricezione della e-mail, è stata subito eseguita una scansione con Trivy, che ha confermato la presenza delle vulnerabilità segnalate da Snyk. Questo conferma che entrambi i database utilizzati da Trivy e Snyk sono aggiornati tempestivamente.
+Dopo la ricezione della e-mail, è stata subito eseguita una scansione con Trivy, che ha confermato la presenza delle vulnerabilità segnalate da Snyk. Questo ha permesso quindi automaticamente di verificare anche la tempestività dell'aggiornamento dei database di vulnerabilità di entrambi gli strumenti.
+
+\subsection{Trivy: scansione di immagini VM}
+D'altro canto, una funzione unica di Trivy è quella di poter eseguire la scansione di immagini di macchine virtuali, oltre che di immagini di container. Tramite il comando \texttt{trivy vm}, è possibile scansionare:
+\begin{itemize}
+   \item\textbf{File di macchine virtuali locali}: è supportata la scansione di file \texttt{.vmdk}
+   \item\textbf{Cluster AWS EC2}: è supportata sia la scansione di AMI (Amazon Machine Image), sia eventuali immagini memorizzate come snapshot EBS (Elastic Block Storage)
+\end{itemize}
+Tale funzionalità rimane, al momento della stesura del presente report, come funzionalità sperimentale.

@@ -25,7 +25,12 @@ I tool effettuano il processo di scansione delle vulnerabilità in container Doc
          \end{itemize}
          Di default, Trivy esegue la scansione di tutte e quattro le categorie, ma è possibile specificare una categoria specifica da scansionare utilizzando l'opzione \texttt{--scanners <vuln\_type>}.
 
-   \item \textbf{Generazione del report}: Trivy genera un report dettagliato delle vulnerabilità rilevate, classificandole in base al loro grado di gravità e fornendo informazioni dettagliate sulle azioni consigliate per mitigarle. Il punteggio di gravità di una vulnerabilità è assegnato tramite il sistema CVSS (Common Vulnerability Scoring System).
+   \item \textbf{Generazione del report}: Trivy genera un report dettagliato delle vulnerabilità rilevate, classificandole in base al loro grado di gravità e fornendo informazioni dettagliate sulle azioni consigliate per mitigarle. La gravità di una vulnerabilità è assegnata tramite due fattori principali:
+         \begin{itemize}
+            \item Principalmente, si fa affidamento al livello di gravità riportato dal vendor per tale vulnerabilità.
+            \item In caso il vendor non riporti la categoria della vulnerabilità, Trivy fa affidamento alla gravità assegnata dal database NVD.
+            \item In caso anche il database NVD non riporti la categoria della vulnerabilità, Trivy la riporta come di categoria UNKNOWN.
+         \end{itemize}
 \end{itemize}
 \subsection{Snyk}
 Snyk opera invece secondo un processo differente, approcciando la scansione delle vulnerabilità direttamente dai momenti di stesura del codice. Esso è infatti suddiviso in quattro componenti principali:
