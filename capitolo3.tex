@@ -1,3 +1,20 @@
 \chapter{Conclusioni}
-La seguente tabella riassuntiva mostra i risultati ottenuti dai test empirici e dalle interviste con gli utenti, confrontando Trivy e Snyk in base a diversi aspetti tecnici e funzionali.
-% Tabella da inserire successivamente
+Entrambi gli strumenti si sono rivelati estremamente efficaci nell'individuazione e la segnalazione di vulnerabilità presenti nelle immagini testate.
+In Tabella \ref{tab:trivy_snyk_comparison} sono riportati i risultati ottenuti dal confronto e quale strumento prevale sull'altro.
+\begin{table}[H]
+   \centering
+   \begin{tabular}{|l|c|c|}
+      \hline
+      \textbf{Funzione}                                              & \textbf{Trivy} & \textbf{Snyk} \\ \hline
+      Maggior numero di vulnerabilità rilevate                       & \checkmark     &               \\ \hline
+      Miglior assegnazione di categoria di gravità per vulnerabilità &                & \checkmark    \\ \hline
+      Supporto linguaggi di programmazione                           & Buono          & Ottimo        \\ \hline
+      Integrazione CI/CD                                             & Ottimo         & Ottimo        \\ \hline
+      Gestione patch/correzioni                                      & Buono          & Ottimo        \\ \hline
+      Scansione immagini container                                   & Ottimo         & Buono         \\ \hline
+      Facilità d'uso                                                 & Ottimo         & Buono         \\ \hline
+      Reporting e dashboard                                          & Buono          & Ottimo        \\ \hline
+   \end{tabular}
+   \caption{Tabella riassuntiva di confronto tra Trivy e Snyk}
+   \label{tab:trivy_snyk_comparison}
+\end{table}

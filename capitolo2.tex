@@ -143,7 +143,7 @@ Eseguendo la scansione del codice soprastante con entrambi gli strumenti, sono s
 Tra le vulnerabilità rilevate, in entrambi i casi è stata rilevata la vulnerabilità desiderata. Su Snyk, la vulnerabilità è stata classificata come l'unica di livello medio. Trivy, invece, ha classificato la vulnerabilità come di livello alto. Questa differenza è dovuta alla diversa classificazione delle vulnerabilità da parte dei database utilizzati, come già discusso in precedenza.
 Le altre vulnerabilità di livello alto rilevate da Trivy sono state:
 \begin{itemize}
-   \item Quattro vulnerabilità molto simili tra loro, relative alla mancanza di ACLs sul bucket S3. (No public access block so not blocking public acls)
+   \item \textbf{Quattro vulnerabilità} molto simili tra loro, relative alla mancanza di ACLs sul bucket S3. (No public access block so not blocking public acls)
    \item \textbf{Bucket does not have encryption enabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente la cifratura dei dati.
    \item \textbf{Bucket does not encrypt data with a customer managed key:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha una configurazione per la cifratura dei dati con una chiave gestita dal cliente.
 
@@ -158,7 +158,7 @@ Le altre vulnerabilità di livello alto rilevate da Trivy sono state:
 
 Questi errori non sono stati rilevati da Snyk, che però ha rilevato due possibili vulnerabilità di livello basso non rilevate invece da Trivy:
 \begin{itemize}
-   \item \textbf{S3 bucket MFA delete control disabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente il controllo Multi-Factor Authentication per la cancellazione dei dati.
+   \item \textbf{S3 bucket MFA delete control disabled:} Questa vulnerabilità è stata rilevata in quanto nel bucket S3 non è stato configurato correttamente il controllo Multi-Factor Authentication per prevenire la cancellazione dei dati.
    \item \textbf{S3 server access logging is disabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente il logging degli accessi al server.
 
 \end{itemize}
@@ -168,7 +168,7 @@ Questi errori non sono stati rilevati da Snyk, che però ha rilevato due possibi
 Durante il testing, sono state rilevate inoltre le funzionalità presenti in uno dei due strumenti, ma non nell'altro. Le funzionalità sono descritte di seguito. Essendo uniche per ogni prodotto, non è stato possibile confrontarle direttamente.
 
 \subsection{Snyk: Monitoraggio Continuo}
-Snyk offre un monitoraggio continuo delle applicazioni e delle dipendenze, inviando notifiche in tempo reale in caso di nuove vulnerabilità che influenzano il codice già in uso. Questo assicura che i team possano reagire rapidamente a nuove minacce. Durante il testing, è stato possibile osservare il funzionamento di questa funzione, avendo ricevuto e-mail contenenti nuove vulnerabilità pubblicate solamente giorni prima, come riportato in figura \ref{fig:snyk_email}.
+Snyk offre un monitoraggio continuo delle applicazioni e delle dipendenze, inviando notifiche in tempo reale in caso di nuove vulnerabilità che influenzano il codice già in uso. Questo assicura che i team possano reagire rapidamente a nuove minacce. Durante il testing, è stato possibile osservare il funzionamento di questa funzione, avendo ricevuto e-mail contenenti nuove vulnerabilità pubblicate solamente giorni prima, come riportato in Figura \ref{fig:snyk_email}.
 
 \begin{figure}[H]
    \centering
@@ -183,6 +183,15 @@ Dopo la ricezione della e-mail, è stata subito eseguita una scansione con Trivy
 D'altro canto, una funzione unica di Trivy è quella di poter eseguire la scansione di immagini di macchine virtuali, oltre che di immagini di container. Tramite il comando \texttt{trivy vm}, è possibile scansionare:
 \begin{itemize}
    \item\textbf{File di macchine virtuali locali}: è supportata la scansione di file \texttt{.vmdk}
-   \item\textbf{Cluster AWS EC2}: è supportata sia la scansione di AMI (Amazon Machine Image), sia eventuali immagini memorizzate come snapshot EBS (Elastic Block Storage)
+   \item\textbf{Cluster AWS EC2}: è supportata sia la scansione di AMI (Amazon Machine Image), sia eventuali immagini memorizzate come snapshot EBS (Elastic Block Storage).
 \end{itemize}
-Tale funzionalità rimane, al momento della stesura del presente report, come funzionalità sperimentale.
+In Figura \ref{fig:trivy_vm}, è riportato un esempio di scansione di un'immagine VM con Trivy, dove vengono rilevate varie vulnerabilità di criticità alta e media. Viene inoltre riportata in quale versione della immagine VM sono state corrette.
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=1\textwidth]{immagini/capitolo2/trivy_vm.png}
+   \caption{Esempio di scansione di un'immagine VM con Trivy}
+   \label{fig:trivy_vm}
+\end{figure}
+Tale funzionalità rimane, al momento della stesura del presente report, come funzionalità sperimentale e ancora in sviluppo.
+
