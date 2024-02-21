@@ -1,5 +1,5 @@
 \chapter{Introduzione}
-In un'epoca in cui il software permea ogni aspetto della vita quotidiana, la sicurezza informatica è diventata una pietra angolare nello sviluppo e nel deployment delle applicazioni. La continua espansione dell'utilizzo dei container e delle microservizi ha portato alla necessità di strumenti sofisticati capaci di identificare e mitigare le vulnerabilità in modo efficace ed efficiente. Questo report si propone di esplorare e confrontare due dei più rilevanti strumenti nel panorama della sicurezza informatica: Trivy e Snyk. Entrambi gli strumenti hanno guadagnato notorietà per la loro capacità di fornire analisi dettagliate e soluzioni alle vulnerabilità di sicurezza in applicazioni e container, ma presentano approcci, caratteristiche e punti di forza distinti.
+Nell'ambito della sicurezza informatica, la gestione delle vulnerabilità nei software è diventata un pilastro fondamentale per garantire l'integrità e la protezione dei sistemi informativi. Con l'avvento delle tecnologie cloud e la diffusione di metodologie di sviluppo agile, gli strumenti di scansione delle vulnerabilità sono diventati strumenti indispensabili per gli sviluppatori e i professionisti della sicurezza. Questo report si propone di esplorare e confrontare due dei più rilevanti strumenti nel panorama della sicurezza informatica: Trivy e Snyk. Entrambi gli strumenti hanno guadagnato notorietà per la loro capacità di fornire analisi dettagliate e soluzioni alle vulnerabilità di sicurezza in applicazioni e container, ma presentano approcci, caratteristiche e punti di forza distinti.
 
 \section*{Trivy}
 
@@ -9,9 +9,9 @@ Trivy, sviluppato da Aqua Security, è un scanner di vulnerabilità open source 
 
 Snyk si posiziona come una soluzione SaaS di sicurezza per lo sviluppo software che enfatizza la collaborazione tra sviluppatori e professionisti della sicurezza. Offre una vasta gamma di funzionalità che vanno oltre la semplice scansione delle vulnerabilità, inclusa la gestione delle dipendenze, la correzione automatica e l'integrazione profonda con ambienti di sviluppo, sistemi di gestione del codice sorgente e pipeline di CI/CD. Snyk mira a dotare i team di strumenti proattivi per affrontare le vulnerabilità all'interno del loro codice, delle dipendenze open source, dei container e delle configurazioni IaC.
 
-\section{Processo di scansione}
+\section{Processi di scansione}
 \subsection{Trivy}
-I tool effettuano il processo di scansione delle vulnerabilità in container Docker modi diversi:
+I tool effettuano il processo di scansione delle vulnerabilità in container Docker in modi diversi:
 
 \textbf{Trivy} utilizza il comando di scansione \texttt{trivy image} per eseguire la scansione di un'immagine Docker. Questo comando esegue automaticamente tre funzioni:
 \begin{itemize}
@@ -53,6 +53,15 @@ Snyk opera invece secondo un processo differente, approcciando la scansione dell
                   \end{itemize}
             \item \textbf{Invio delle vulnerabilità a Snyk:} La lista del software trovato viene inviata tramite API a Snyk, la quale confronta i dati con il suo database di vulnerabilità. Le vulnerabilità trovate vengono quindi restituite all'utente.
          \end{itemize}
-   \item \textbf{Snyk Open Source:} Snyk Open Source è uno strumento di analisi delle vulnerabilità per le dipendenze open source, che identifica e classifica le vulnerabilità presenti nelle librerie e nei pacchetti utilizzati all'interno del codice sorgente. Snyk Open Source è in grado di eseguire la scansione delle dipendenze open source, identificando le vulnerabilità e fornendo informazioni dettagliate sulle azioni consigliate per mitigarle.
-   \item \textbf{Snyk Infrastructure as Code (IaC):} Snyk IaC è uno strumento di analisi delle vulnerabilità per le configurazioni Infrastructure as Code (IaC), che identifica e classifica le vulnerabilità presenti nei file di configurazione di Terraform, CloudFormation e altri strumenti di automazione dell'infrastruttura. Snyk IaC è in grado di eseguire la scansione delle configurazioni IaC, identificando le vulnerabilità e fornendo informazioni dettagliate sulle azioni consigliate per mitigarle.
+         Snyk assegna inoltre ad ogni vulnerabilità un cosiddetto \textbf{priority score}, ovvero un punteggio che indica la priorità con la quale la vulnerabilità dovrebbe essere risolta. Questo punteggio è calcolato in base a diversi fattori, tra cui la gravità della vulnerabilità, la popolarità del pacchetto e la presenza di exploit pubblici.
+         In Figura \ref{fig:snyk_container} è riportata una vulnerabilità rilevata tramite analisi con Snyk Container. È possibile notare, sulla sinistra, anche il Priority Score.
+         \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{immagini/capitolo1/snyk_container.png}
+            \caption{Vulnerabilità rilevata tramite l'analisi con Snyk Container}
+            \label{fig:snyk_container}
+         \end{figure}
+   \item \textbf{Snyk Open Source:} Uno strumento di analisi delle vulnerabilità per le dipendenze open source, che identifica e classifica le vulnerabilità presenti nelle librerie e nei pacchetti utilizzati all'interno del codice sorgente. Snyk Open Source è in grado di eseguire la scansione delle dipendenze open source, identificando le vulnerabilità e fornendo informazioni dettagliate sulle azioni consigliate per mitigarle.
+   \item \textbf{Snyk Infrastructure as Code (IaC):} Snyk IaC è uno strumento di analisi delle vulnerabilità per le configurazioni Infrastructure as Code (IaC), che identifica e classifica le vulnerabilità presenti nei file di configurazione di Terraform, CloudFormation e altri strumenti di automazione dell'infrastruttura. Snyk IaC è in grado di eseguire la scansione delle configurazioni IaC, identificando le vulnerabilità e fornendo informazioni  sulle azioni consigliate per mitigarle.
+
 \end{itemize}

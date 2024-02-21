@@ -1,10 +1,23 @@
 \chapter{Confronto}
 \section{Scansione delle vulnerabilità}
 Il database di entrambi gli strumenti è un aspetto cruciale per la qualità e l'accuratezza delle analisi di vulnerabilità. Trivy e Snyk utilizzano database di vulnerabilità differenti, che influenzano la loro capacità di identificare e classificare le vulnerabilità.
+\subsection{Vulnerabilità nella Supply Chain}
+La struttura "a strati" dei container Docker permette un'enorme flessibilità dal punto di vista dello sviluppo e della distribuzione delle applicazioni, ma introduce anche una serie di nuove sfide per la sicurezza. Le immagini Docker sono costruite a partire da altre immagini che possono contenere una vasta gamma di pacchetti e librerie, ognuno dei quali può essere vulnerabile a una serie di minacce.
+
+Sulla base di ciò, possono quindi nascere due nuove classificazioni di vulnerabilità:
+
+\begin{itemize}
+   \item \textbf{Vulnerabilità ereditate}: vulnerabilità presenti nella base image utilizzata per costruire l'immagine Docker.
+   \item \textbf{Vulnerabilità di base}: vulnerabilità presenti nei pacchetti e nelle librerie installate dall'utente nell'immagine Docker.
+\end{itemize}
+È quindi necessario categorizzare le vulnerabilità in base alla loro origine, perché il modo in cui esse devono essere affrontate è differente.
+\begin{itemize}
+   \item Le vulnerabilità ereditate richiedono una modifica della base image. Per risolverle, potrebbe essere necessario aggiornare la base image, o sostituirla con una versione alternativa. Quest'ultimo processo può essere complesso e dispendioso, in quanto può richiedere la modifica della pipeline di sviluppo e la verifica della compatibilità tra l'applicazione esistente e la nuova base image.
+   \item Le vulnerabilità di base possono essere corrette più facilmente, tipicamente aggiornando i pacchetti e le librerie installate all'interno dell'immagine. Questo processo è generalmente più semplice e meno dispendioso rispetto alla correzione delle vulnerabilità ereditate.
+\end{itemize}
 
 
-In questa parte di testing, si è voluto valutare la capacità di Trivy e Snyk di identificare e classificare le vulnerabilità in base al database utilizzato. Per fare ciò, si è utilizzato un campione di immagini di container e repository Git, contenenti vulnerabilità note e ben documentate, e si è confrontato il risultato delle scansioni di Trivy e Snyk con le informazioni disponibili nei database VulnDB e Snyk. I risultati di questo test sono stati valutati in base alla precisione, alla completezza e alla tempestività delle informazioni fornite da Trivy e Snyk, e alla loro capacità di identificare e classificare le vulnerabilità in base al database utilizzato.
-L'aggiornamento dei database avviene per ogni tool in modo differente. Trivy, infatti, controlla la presenza di aggiornamenti del database ad ogni esecuzione, e scarica automaticamente la versione più recente. Snyk, invece, offre la possibilità di aggiornare manualmente il database, ma non è possibile controllare la presenza di aggiornamenti in modo automatico.
+In questa prima parte di testing, si è voluto valutare la capacità di Trivy e Snyk di identificare e classificare le vulnerabilità presenti in immagini Docker altamente utilizzate. Per fare ciò, si è utilizzato un campione di immagini di container, e si è confrontato il risultato delle scansioni di Trivy e Snyk. I risultati di questi test sono stati valutati in base alla precisione e alla completezza delle informazioni fornite da Trivy e Snyk.
 
 Le immagini Docker sottoposte a scansione sono state selezionate in base alla loro popolarità e alla loro rilevanza nel panorama delle applicazioni e dei servizi cloud. In particolare, si è scelto di testare le seguenti immagini:
 \begin{itemize}
@@ -14,7 +27,8 @@ Le immagini Docker sottoposte a scansione sono state selezionate in base alla lo
    \item\textbf{alpine}: una delle immagini di container più leggere e minimali, basata su Alpine Linux È ampiamente usata come base per altre immagini di container.
    \item\textbf{node}: ambiente di esecuzione per JavaScript basato su Chrome V8.
 \end{itemize}
-In particolare, si è voluto testare due tipi di versioni: la versione più recente, e una versione più datata. Nella tabella \ref{tab:scan_results} sono riportati i risultati ottenuti da entrambi i tool per ciascuna immagine testata.
+Inoltre, si è voluto testare due tipi di versioni per ogni immagine: la versione più recente, e una versione più datata.
+Nella tabella \ref{tab:scan_results} sono riportati i risultati ottenuti da entrambi i tool per ciascuna immagine testata.
 \begin{table}[H]
    \centering
    \begin{tabularx}{\textwidth}{|l|l|X|X|X|X|X|X|X|X|}
@@ -38,7 +52,7 @@ In particolare, si è voluto testare due tipi di versioni: la versione più rece
 \subsection{Risultati delle scansioni}
 Dai risultati ottenuti, si evincono le seguenti considerazioni:
 \subsubsection{Numero di vulnerabilità rilevate}
-Trivy generalmente avvisa di un numero maggiore di vulnerabilità rispetto a Snyk. Questo è particolarmente evidente per le versioni più datate delle immagini, dove Trivy rileva un numero significativamente maggiore di vulnerabilità. Da solo, il mero numero di vulnerabilità rilevate non è un indicatore della qualità o dell'accuratezza delle scansioni, per via della presenza di eventuali falsi positivi o di vulnerabilità non rilevate.
+Trivy generalmente avvisa di un numero maggiore di vulnerabilità rispetto a Snyk. Questo è particolarmente evidente per le versioni più datate delle immagini, dove Trivy rileva un numero significativamente maggiore di vulnerabilità. Da solo, il mero numero di vulnerabilità rilevate non è un indicatore della qualità o dell'accuratezza delle scansioni, per via della presenza di eventuali falsi positivi o di vulnerabilità non rilevate. Dopo un'ispezione manuale a campione, è stato però visto che la quasi totalità delle vulnerabilità era effettivamente tale, seppure la loro gravità fosse praticamente trascurabile. I rari casi si sono sempre limitati ad estremamente sporadici.
 
 
 \subsubsection{Differenza nella classificazione delle stesse vulnerabilità}
@@ -53,9 +67,9 @@ Gli strumenti hanno riportato, in molti casi, una differenza nelle classificazio
          \end{itemize}
 \end{itemize}
 Visitando infatti il sito web \texttt{security-tracker.debian.org}, è possibile osservare che la vulnerabilità CVE-2023-6879 è stata classificata come di livello basso dal team di sicurezza di Debian, e questo ha influenzato in modo predominante la classificazione di Snyk.
-\subsubsection{Confermata di presenza di vulnerabilità ereditate}
+\subsubsection{Confermata di presenza di vulnerabilità ereditate dalla Base Image}
 È stata inoltre confermata la presenza di vulnerabilità "ereditate" dalla Base Image: ad esempio, l'unica vulnerabilità che Snyk rileva come critica nell'ultima versione delle immagini \texttt{nginx, wordpress, node} è la stessa vulnerabilità CVE-2023-45853. Questa vulnerabilità è attualmente presente nel sistema Debian e relativa alla libreria \texttt{zlib}, ed è stata quindi ereditata dalle immagini Docker che utilizzano Debian come base image.
-Trivy riporta anch'esso che la vulnerabilità è critica, ma anche che ha uno stato \texttt{will\_not\_fix}. Ciò indica che tale vulnerabilità è conosciuta, ma al momento non ci sono piani per una correzione. Snyk non riporta invece tale informazione.
+Trivy riporta anch'esso che la vulnerabilità è critica, ma anche che essa ha uno stato \texttt{will\_not\_fix}. Ciò indica che tale vulnerabilità è conosciuta, ma al momento non ci sono piani per una correzione. Snyk non riporta invece tale informazione.
 
 
 \subsection{Formati di output}
@@ -179,8 +193,14 @@ Snyk offre un monitoraggio continuo delle applicazioni e delle dipendenze, invia
 
 Dopo la ricezione della e-mail, è stata subito eseguita una scansione con Trivy, che ha confermato la presenza delle vulnerabilità segnalate da Snyk. Questo ha permesso quindi automaticamente di verificare anche la tempestività dell'aggiornamento dei database di vulnerabilità di entrambi gli strumenti.
 
-\subsection{Trivy: scansione di immagini VM}
-D'altro canto, una funzione unica di Trivy è quella di poter eseguire la scansione di immagini di macchine virtuali, oltre che di immagini di container. Tramite il comando \texttt{trivy vm}, è possibile scansionare:
+\subsection{Trivy: Funzionamento Offline}
+Essendo un tool completamente open source, Trivy ha la capacità di poter essere utilizzato in ambienti completamente isolati, senza la necessità di connessione a Internet. Questo è possibile grazie alla possibilità di scaricare il database di vulnerabilità in locale, e di eseguire le scansioni utilizzando il database locale. Questa funzionalità è particolarmente utile in ambienti ad alta sicurezza, dove la connessione a Internet è limitata o non disponibile. Snyk, invece, richiede sempre una connessione a Internet per poter funzionare correttamente, necessitando di contattare la propria API per eseguire la vera e propria scansione.
+
+\subsection{Snyk: Creazione Automatica di Pull Request}
+Snyk offre la possibilità di creare automaticamente pull request atte a correggere le vulnerabilità rilevate. Questa funzionalità è particolarmente utile per i team di sviluppo, in quanto permette di automatizzare il processo di correzione delle vulnerabilità, riducendo il tempo e lo sforzo necessario per applicare le correzioni.
+
+\subsection{Trivy: Scansione di Immagini VM}
+Un'ultima funzione unica di Trivy è quella di poter eseguire la scansione di immagini di macchine virtuali, oltre che di immagini di container. Tramite il comando \texttt{trivy vm}, è possibile scansionare:
 \begin{itemize}
    \item\textbf{File di macchine virtuali locali}: è supportata la scansione di file \texttt{.vmdk}
    \item\textbf{Cluster AWS EC2}: è supportata sia la scansione di AMI (Amazon Machine Image), sia eventuali immagini memorizzate come snapshot EBS (Elastic Block Storage).
@@ -195,3 +215,5 @@ In Figura \ref{fig:trivy_vm}, è riportato un esempio di scansione di un'immagin
 \end{figure}
 Tale funzionalità rimane, al momento della stesura del presente report, come funzionalità sperimentale e ancora in sviluppo.
 
+\section{Conclusioni}
+Il confronto svolto ha evidenziato punti di forza e aree di miglioramento per entrambi gli strumenti nella gestione delle vulnerabilità software. Trivy, con la capacità di essere più sensibile per un numero maggiore di vulnerabilità, si dimostra particolarmente efficace per gli ambienti che richiedono una scansione approfondita e dettagliata, anche a costo di una maggiore incidenza di falsi positivi. La sua funzionalità di scansione di immagini VM aggiunge un ulteriore strato di utilità, rendendolo adatto per ambienti che utilizzano una varietà di soluzioni di virtualizzazione. D'altra parte, Snyk si distingue per il suo approccio conservativo nella classificazione delle vulnerabilità, potenzialmente riducendo il rischio di allarmi non necessari, e offre un valore aggiunto significativo con il suo monitoraggio continuo, assicurando che le applicazioni siano protette contro le nuove vulnerabilità non appena vengono scoperte.
