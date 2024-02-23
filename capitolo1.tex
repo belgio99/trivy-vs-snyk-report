@@ -3,11 +3,11 @@ Nell'ambito della sicurezza informatica, la gestione delle vulnerabilità nei so
 
 \section*{Trivy}
 
-Trivy\cite{trivy_main}, sviluppato da Aqua Security, è un scanner di vulnerabilità open source semplice ma completo, che si distingue per la sua facilità d'uso e la capacità di integrarsi senza soluzione di continuità in vari ambienti di sviluppo e pipeline CI/CD. Le sue funzionalità includono la scansione di repository Git, filesystem e configurazioni Infrastructure as Code (IaC), rendendo quindi Trivy uno strumento versatile per sia per sviluppatori che per i team di sicurezza. Trivy è inoltre altamente personalizzabile, con la possibilità, ad esempio, di includere proprie vulnerabilità appena scoperte nell'analisi dei container.
+Trivy\footnote{\url{https://github.com/aquasecurity/trivy}}, sviluppato da Aqua Security, è uno scanner di vulnerabilità open source semplice ma completo, che si distingue per la sua facilità d'uso e la capacità di integrarsi in vari ambienti di sviluppo e pipeline CI/CD. Le sue funzionalità includono la scansione di repository Git, filesystem e configurazioni Infrastructure as Code (IaC), che rendono quindi Trivy uno strumento versatile sia per sviluppatori che per i team di sicurezza. Trivy è inoltre altamente personalizzabile, con la possibilità, ad esempio, di includere proprie vulnerabilità appena scoperte nell'analisi dei container.
 
 \section*{Snyk}
 
-Snyk\cite{snyk_main} si posiziona come una soluzione SaaS "chiavi in mano" per la totalità del processo di analisi di sicurezza nello sviluppo software. Offre una vasta gamma di funzionalità che vanno oltre la semplice scansione delle vulnerabilità, inclusa la gestione delle dipendenze, la correzione automatica e l'integrazione profonda con ambienti di sviluppo, sistemi di gestione del codice sorgente e pipeline di CI/CD. Snyk mira a dotare i team di strumenti proattivi per affrontare le vulnerabilità all'interno del loro codice, delle dipendenze open source, dei container e delle configurazioni IaC, al contempo automatizzando i processi più manuali come, ad esempio, gli aggiornamenti delle dipendenze.
+Snyk\footnote{\url{https://snyk.io}} si posiziona come una soluzione SaaS "chiavi in mano" per tutto ciò che concerne le vulnerabilità nello sviluppo software. Diviso in quattro componenti principali, rende possibile l'analisi delle vulnerabilità sin dai primi momenti di scrittura del codice. Inoltre, punta a semplificare la gestione delle vulnerabilità nelle dipendenze, attuando ove possibile risoluzioni automatiche. Utilizzabile sia da interfaccia Web che da linea di comando, Snyk mira a dotare anche ai team più piccoli degli strumenti e dei consigli per affrontare le vulnerabilità all'interno del loro codice, delle dipendenze open source, dei container e delle configurazioni IaC.
 
 \section{Processi di scansione}
 \subsection{Trivy}
@@ -35,14 +35,14 @@ I tool effettuano il processo di scansione delle vulnerabilità in container Doc
 \subsection{Snyk}
 Snyk opera invece tramite un approccio differente\cite{snyk_docs}. Invece di utilizzare un unico comando per performare tutte le azioni di scansione, Snyk è suddiviso in quattro componenti principali, ognuna dedicata ad un momento differente nello sviluppo software:
 \begin{itemize}
-   \item \textbf{Snyk Code:} componente relativo all'analisi statica. In questo passaggio, viene analizzato il codice sorgente per identificare i possibili problemi di sicurezza presenti nel codice. Per fare ciò, è necessario integrare Snyk Code con sistemi di gestione del codice sorgente (es. Git), o con ambienti di sviluppo (es. Visual Studio Code) per eseguire automaticamente la scansione del codice sorgente, ad esempio all'esecuzione di un nuovo commit. Gli eventuali problemi di sicurezza rilevati vengono notificati all'utente tramite l'interfaccia web di Snyk, con un'evidenziazione delle linee di codice interessate e delle azioni consigliate per mitigare i problemi, come riportato in Figura \ref{fig:snyk_code}.
+   \item \textbf{Snyk Code:} componente relativo all'analisi statica. Connettendo il proprio sistema di gestione del codice sorgente (es. Git) a Snyk Code tramite l'apposita integrazione, il proprio progetto viene analizzato automaticamente, per identificare i possibili problemi di sicurezza presenti nel codice. Gli eventuali problemi di sicurezza rilevati vengono notificati all'utente tramite l'interfaccia web di Snyk, con un'evidenziazione delle linee di codice interessate e delle azioni consigliate per mitigare i problemi, come riportato in Figura \ref{fig:snyk_code}.
          \begin{figure}[H]
             \centering
             \includegraphics[width=0.8\textwidth]{immagini/capitolo1/snyk_code.jpg}
             \caption{Risultato della scansione del codice sorgente con Snyk Code}
             \label{fig:snyk_code}
          \end{figure}
-   \item \textbf{Snyk Container:} il vero e proprio strumento per l'analisi delle vulnerabilità. Questo processo è suddiviso in tre fasi principali:
+   \item \textbf{Snyk Container:} il vero e proprio strumento per l'analisi delle vulnerabilità nei container. Questo processo, avviabile tramite il comando \texttt{snyk test}, è suddiviso in tre fasi principali:
          \begin{itemize}
             \item \textbf{Download dell'immagine}: l'immagine viene automaticamente scaricata in locale per permetterne l'analisi.
             \item \textbf{Ottenimento della lista del software installato:} Snyk cerca il software installato all'interno dell'immagine. La ricerca viene effettuata in base a tre criteri:
@@ -51,9 +51,9 @@ Snyk opera invece tramite un approccio differente\cite{snyk_docs}. Invece di uti
                      \item Software comunemente installato, e residente in posizioni predefinite
                      \item Applicazioni basate sulla presenza di un file manifest (es. package.json, requirements.txt)
                   \end{itemize}
-            \item \textbf{Invio delle vulnerabilità a Snyk:} La lista del software trovato viene inviata tramite API a Snyk, la quale confronta i dati con il suo database di vulnerabilità. Le vulnerabilità trovate vengono quindi restituite all'utente.
+            \item \textbf{Invio delle vulnerabilità a Snyk:} La lista del software trovato viene inviata tramite API a Snyk, la quale confronta i dati con il suo database di vulnerabilità. Un report contenente le vulnerabilità trovate viene quindi restituito all'utente.
          \end{itemize}
-         Snyk assegna inoltre ad ogni vulnerabilità un cosiddetto \textbf{priority score}, ovvero un punteggio che indica la priorità con la quale la vulnerabilità dovrebbe essere risolta. Questo punteggio è calcolato in base a diversi fattori, tra cui la gravità della vulnerabilità, la popolarità del pacchetto e la presenza di exploit pubblici.
+         Snyk assegna inoltre ad ogni vulnerabilità un cosiddetto \textbf{priority score}, ovvero un punteggio da 0 a 1000 che indica la priorità con la quale la vulnerabilità dovrebbe essere risolta. Questo punteggio è calcolato in base a diversi fattori, tra cui la gravità della vulnerabilità, la popolarità del pacchetto e la presenza di exploit pubblici.
          In Figura \ref{fig:snyk_container} è riportata una vulnerabilità rilevata tramite analisi con Snyk Container. È possibile notare, sulla destra, anche il Priority Score.
          \begin{figure}[H]
             \centering
