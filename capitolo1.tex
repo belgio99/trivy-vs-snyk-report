@@ -3,17 +3,17 @@ Nell'ambito della sicurezza informatica, la gestione delle vulnerabilità nei so
 
 \section*{Trivy}
 
-Trivy, sviluppato da Aqua Security, è un scanner di vulnerabilità open source semplice ma completo, che si distingue per la sua facilità d'uso e la capacità di integrarsi senza soluzione di continuità in vari ambienti di sviluppo e pipeline CI/CD. Le sue funzionalità includono la scansione di repository Git, filesystem e configurazioni Infrastructure as Code (IaC), rendendo quindi Trivy uno strumento versatile per gli sviluppatori e i team di sicurezza.
+Trivy\cite{trivy_main}, sviluppato da Aqua Security, è un scanner di vulnerabilità open source semplice ma completo, che si distingue per la sua facilità d'uso e la capacità di integrarsi senza soluzione di continuità in vari ambienti di sviluppo e pipeline CI/CD. Le sue funzionalità includono la scansione di repository Git, filesystem e configurazioni Infrastructure as Code (IaC), rendendo quindi Trivy uno strumento versatile per sia per sviluppatori che per i team di sicurezza. Trivy è inoltre altamente personalizzabile, con la possibilità, ad esempio, di includere proprie vulnerabilità appena scoperte nell'analisi dei container.
 
 \section*{Snyk}
 
-Snyk si posiziona come una soluzione SaaS "chiavi in mano" per la totalità del processo di analisi di sicurezza nello sviluppo software. Offre una vasta gamma di funzionalità che vanno oltre la semplice scansione delle vulnerabilità, inclusa la gestione delle dipendenze, la correzione automatica e l'integrazione profonda con ambienti di sviluppo, sistemi di gestione del codice sorgente e pipeline di CI/CD. Snyk mira a dotare i team di strumenti proattivi per affrontare le vulnerabilità all'interno del loro codice, delle dipendenze open source, dei container e delle configurazioni IaC.
+Snyk\cite{snyk_main} si posiziona come una soluzione SaaS "chiavi in mano" per la totalità del processo di analisi di sicurezza nello sviluppo software. Offre una vasta gamma di funzionalità che vanno oltre la semplice scansione delle vulnerabilità, inclusa la gestione delle dipendenze, la correzione automatica e l'integrazione profonda con ambienti di sviluppo, sistemi di gestione del codice sorgente e pipeline di CI/CD. Snyk mira a dotare i team di strumenti proattivi per affrontare le vulnerabilità all'interno del loro codice, delle dipendenze open source, dei container e delle configurazioni IaC, al contempo automatizzando i processi più manuali come, ad esempio, gli aggiornamenti delle dipendenze.
 
 \section{Processi di scansione}
 \subsection{Trivy}
 I tool effettuano il processo di scansione delle vulnerabilità in container Docker in modi diversi:
 
-\textbf{Trivy} utilizza il comando di scansione \texttt{trivy image} per eseguire la scansione di un'immagine Docker. Questo comando esegue automaticamente tre funzioni:
+\textbf{Trivy} utilizza il comando di scansione \texttt{trivy image} per eseguire la scansione di un'immagine Docker\cite{trivy_docs}. Questo comando esegue automaticamente tre funzioni:
 \begin{itemize}
    \item \textbf{Download del database delle vulnerabilità}: Trivy scarica automaticamente l'ultima versione del database delle vulnerabilità dalla repository ufficiale.
    \item \textbf{Scansione dell'immagine}: Trivy esegue la scansione dell'immagine Docker specificata, identificando e classificando le vulnerabilità presenti nei pacchetti e nelle librerie. Nel processo di scansione, Trivy analizza i file presenti nell'immagine, identificando le versioni dei pacchetti e confrontandole con il database di vulnerabilità. Nel processo, vengono scansionate quattro categorie di problemi di sicurezza:
@@ -33,9 +33,9 @@ I tool effettuano il processo di scansione delle vulnerabilità in container Doc
          \end{itemize}
 \end{itemize}
 \subsection{Snyk}
-Snyk opera invece tramite un approccio differente. Invece di utilizzare un unico comando per performare tutte le azioni di scansione, Snyk è suddiviso in quattro componenti principali, ognuna dedicata ad un momento differente nello sviluppo software:
+Snyk opera invece tramite un approccio differente\cite{snyk_docs}. Invece di utilizzare un unico comando per performare tutte le azioni di scansione, Snyk è suddiviso in quattro componenti principali, ognuna dedicata ad un momento differente nello sviluppo software:
 \begin{itemize}
-   \item \textbf{Snyk Code:} componente relativo all'analisi statica. In questo passaggio, viene analizzato il codice sorgente per identificare i possibili problemi di sicurezza presenti nel codice. Per fare ciò, è necessario integrare Snyk Code con sistemi di gestione del codice sorgente (es. Git), o con ambienti di sviluppo (es. Visual Studio Code) per eseguire automaticamente la scansione del codice sorgente, ad esempio all'esecuzione di un nuovo commit. Gli eventuali problemi di sicurezza rilevati vengono notificati all'utente tramite l'interfaccia web di Snyk, con un'evidenziazione delle linee di codice interessate e delle azioni consigliate per mitigare i problemi, come riportato in figura \ref{fig:snyk_code}.
+   \item \textbf{Snyk Code:} componente relativo all'analisi statica. In questo passaggio, viene analizzato il codice sorgente per identificare i possibili problemi di sicurezza presenti nel codice. Per fare ciò, è necessario integrare Snyk Code con sistemi di gestione del codice sorgente (es. Git), o con ambienti di sviluppo (es. Visual Studio Code) per eseguire automaticamente la scansione del codice sorgente, ad esempio all'esecuzione di un nuovo commit. Gli eventuali problemi di sicurezza rilevati vengono notificati all'utente tramite l'interfaccia web di Snyk, con un'evidenziazione delle linee di codice interessate e delle azioni consigliate per mitigare i problemi, come riportato in Figura \ref{fig:snyk_code}.
          \begin{figure}[H]
             \centering
             \includegraphics[width=0.8\textwidth]{immagini/capitolo1/snyk_code.jpg}
