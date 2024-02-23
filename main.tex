@@ -13,6 +13,7 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{biblatex}
+\usepackage{csquotes}
 \addbibresource{bibliography.bib}
 
 \setlength{\parindent}{0pt}
@@ -50,32 +51,31 @@
 \lstset{style=mystyle}
 
 \begin{document}
-\begin{center}
-   \vspace*{1cm}
-   \Huge
-   \textbf{Trivy vs Snyk}
-   \vspace{0.5cm}
-   \Large
-   \vfill
-   \textbf{Confronto tra due scanner di vulnerabilità per container}
+\begin{titlepage}
+   \centering
+   \vspace*{5cm} % Distribuisce equamente lo spazio sopra il contenuto
+
+   {\Huge\bfseries Trivy vs Snyk}\\[1cm] % Titolo con spazio
+   {\Large\bfseries Confronto tra due scanner di vulnerabilità per container}\\[2cm] % Sottotitolo con spazio maggiorato
+
+   \vspace*{\fill} % Distribuisce equamente lo spazio sotto il contenuto
+   {\large Giovanni Bellini}\\[0.5cm] % Autore
+   {\large Matricola: 600035}\\[1cm] % Matricola
+
+   {\normalsize ICT Risk Assessment}\\
+   {\normalsize Corso di laurea magistrale in Informatica}\\
+   {\normalsize Università di Pisa}\\[2cm] % Affiliazione
+
    \vspace{1.5cm}
-   \large
-   \vfill
-   \textbf{Giovanni Bellini}
 
-   \textbf{Matricola: 600035}
+   {\Large\bfseries Febbraio 2024} % Data
 
-   ICT Risk Assessment
+   \vspace*{2cm}
 
-      {Corso di laurea magistrale in Informatica}
 
-      {Università di Pisa}
-   \vfill
-   \Large
-   \textbf{Febbraio 2024}
-\end{center}
-
+\end{titlepage}
 \pagebreak
+
 \tableofcontents
 
 \input{capitolo1}

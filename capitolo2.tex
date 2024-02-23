@@ -2,13 +2,13 @@
 \section{Scansione delle vulnerabilità}
 Il database di entrambi gli strumenti è un aspetto cruciale per la qualità e l'accuratezza delle analisi di vulnerabilità. Trivy e Snyk utilizzano database di vulnerabilità differenti, che influenzano la loro capacità di identificare e classificare le vulnerabilità.
 \subsection{Vulnerabilità nella Supply Chain}
-La struttura "a strati" dei container Docker permette un'enorme flessibilità dal punto di vista dello sviluppo e della distribuzione delle applicazioni, ma introduce anche una serie di nuove sfide per la sicurezza. Le immagini Docker sono costruite a partire da altre immagini che possono contenere una vasta gamma di pacchetti e librerie, ognuno dei quali può essere vulnerabile a una serie di minacce.
+La struttura "a strati" dei container Docker permette un'enorme flessibilità dal punto di vista dello sviluppo e della distribuzione delle applicazioni, ma introduce anche una serie di nuove sfide per la sicurezza. Le immagini Docker sono costruite a partire da altre immagini che possono contenere a loro volta una vasta gamma di pacchetti e librerie, ognuno eventualmente vulnerabile ad una serie di minacce.
 
 Sulla base di ciò, possono quindi nascere due nuove classificazioni di vulnerabilità:
 
 \begin{itemize}
    \item \textbf{Vulnerabilità ereditate}: vulnerabilità presenti nella base image utilizzata per costruire l'immagine Docker.
-   \item \textbf{Vulnerabilità installate}: vulnerabilità presenti nei pacchetti e nelle librerie installate dall'utente nell'immagine Docker.
+   \item \textbf{Vulnerabilità installate}: vulnerabilità presenti nei pacchetti e nelle librerie installate dall'utente nell'immagine Docker in uso.
 \end{itemize}
 È quindi necessario categorizzare le vulnerabilità in base alla loro origine, perché il modo in cui esse devono essere affrontate è differente.
 \begin{itemize}
@@ -57,7 +57,7 @@ Trivy generalmente avvisa di un numero maggiore di vulnerabilità rispetto a Sny
 
 
 \subsubsection{Differenza nella classificazione delle stesse vulnerabilità}
-Gli strumenti hanno riportato, in molti casi, una differenza nelle classificazioni delle stesse vulnerabilità. Questo è dovuto alla differenza di valutazione delle vulnerabilità da parte dei database utilizzati. In particolare, Snyk tende a classificare le vulnerabilità in modo più conservativo, assegnando un numero inferiore di vulnerabilità di livello critico e alto rispetto a Trivy. Ad esempio, per l'immagine \texttt{nginx:latest}, entrambi i tool hanno rilevato correttamente la vulnerabilità CVE-2023-6879, relativa ad un buffer overflow presente nella libreria \texttt{AOMedia}, ma mentre Trivy ha classificato la vulnerabilità come di livello critico, Snyk ha classificato la stessa come di livello basso. Questa differenza è dovuta alle sorgenti di informazioni di valutazione utilizzate dai due tool:
+Gli strumenti hanno riportato, in molti casi, una differenza nelle classificazioni delle stesse vulnerabilità. Questo è dovuto alla differenza di valutazione delle vulnerabilità da parte dei database utilizzati. In particolare, Snyk tende a classificare le vulnerabilità in modo più conservativo, assegnando un numero inferiore di vulnerabilità di livello critico o alto rispetto a Trivy. Ad esempio, per l'immagine \texttt{nginx:latest}, entrambi i tool hanno rilevato correttamente la vulnerabilità CVE-2023-6879, relativa ad un buffer overflow presente nella libreria \texttt{AOMedia}, ma mentre Trivy ha classificato la vulnerabilità come di livello critico, Snyk ha classificato la stessa come di livello basso. Questa differenza è dovuta alle sorgenti di informazioni di valutazione utilizzate dai due tool:
 \begin{itemize}
    \item Trivy utilizza principalmente la gravità assegnata dal vendor. In caso essa non sia disponibile, si induce la gravità dal punteggio CVSS. In caso anch'esso non sia disponibile, viene usata la classificazione NVD.
    \item Snyk invece assegna la categoria in base a tre elementi di valutazione:
@@ -121,7 +121,7 @@ Snyk permette inoltre di generare report nei seguenti formati:
 Differentemente da Trivy, Snyk non permette di generare report in formati tabellari o personalizzati.
 
 \section{Scansione di configurazioni IaC}
-Un'altra funzionalità offerta da entrambi i tool è relativa alla scansione di configurazioni IaC, al fine di rilevare problemi di sicurezza o cattive pratiche di configurazione. Per testare tale funzionalità, si è utilizzato un campione di file di configurazione di Terraform, appropriatamente configurato con una vulnerabilità di esempio nota e ben documentata. Il codice in questione è il seguente:
+Un'altra funzionalità offerta da entrambi i tool è relativa alla scansione di configurazioni IaC, al fine di rilevare problemi di sicurezza o cattive pratiche di configurazione. Per testare tale funzionalità, è stato redatto un campione di file di configurazione di Terraform, appropriatamente configurato con una vulnerabilità di esempio nota e ben documentata. Il codice in questione è il seguente:
 \begin{lstlisting}
    provider "aws" {
       region = "us-east-1"
@@ -155,30 +155,30 @@ Eseguendo la scansione del codice soprastante con entrambi gli strumenti, sono s
    \end{tabularx}
 \end{center}
 
-Tra le vulnerabilità rilevate, in entrambi i casi è stata rilevata la vulnerabilità desiderata. Su Snyk, la vulnerabilità è stata classificata come l'unica di livello medio. Trivy, invece, ha classificato la vulnerabilità come di livello alto. Questa differenza è dovuta alla diversa classificazione delle vulnerabilità da parte dei database utilizzati, come già discusso in precedenza. Tali vulnerabilità sono descritte nelle Figure \ref{fig:trivy_iac} e \ref{fig:snyk_iac}.
+Tra le vulnerabilità rilevate, in entrambi i casi è stata rilevata la vulnerabilità desiderata. Su Snyk, essa è stata classificata come l'unica di livello medio. Trivy, invece, ha classificato la vulnerabilità come di livello alto. Questa differenza è dovuta alla diversa classificazione delle vulnerabilità da parte dei database utilizzati, come già discusso in precedenza. Tali vulnerabilità sono descritte nelle Figure \ref{fig:trivy_iac} e \ref{fig:snyk_iac}.
 Inoltre, le altre vulnerabilità di livello alto rilevate da Trivy sono state:
 \begin{itemize}
    \item \textbf{Quattro vulnerabilità} molto simili tra loro, relative alla mancanza di ACLs sul bucket S3. (es. No public access block so not blocking public acls)
-   \item \textbf{Bucket does not have encryption enabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente la cifratura dei dati.
-   \item \textbf{Bucket does not encrypt data with a customer managed key:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha una configurazione per la cifratura dei dati con una chiave gestita dal cliente.
+   \item \textbf{Bucket does not have encryption enabled:} Vulnerabilità rilevata in quanto nel bucket S3 non è stata configurata la cifratura dei dati.
+   \item \textbf{Bucket does not encrypt data with a customer managed key:} Vulnerabilità rilevata in quanto il bucket S3 non ha una configurazione per la cifratura dei dati con una chiave gestita unicamente dal cliente.
 
 \end{itemize}
 
 \begin{figure}[H]
    \centering
-   \includegraphics[width=0.6\textwidth]{immagini/capitolo2/trivy_iac.png}
+   \includegraphics[width=0.7\textwidth]{immagini/capitolo2/trivy_iac.png}
    \caption{Trivy: corretto riconoscimento della vulnerabilità public-read}
    \label{fig:trivy_iac}
 \end{figure}
 
 Questi errori non sono stati rilevati da Snyk, che però ha rilevato due possibili vulnerabilità di livello basso non rilevate invece da Trivy:
 \begin{itemize}
-   \item \textbf{S3 bucket MFA delete control disabled:} Questa vulnerabilità è stata rilevata in quanto nel bucket S3 non è stato configurato correttamente il controllo Multi-Factor Authentication per prevenire la cancellazione dei dati.
-   \item \textbf{S3 server access logging is disabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente il logging degli accessi al server.
+   \item \textbf{S3 bucket MFA delete control disabled:} Vulnerabilità rilevata in quanto nel bucket S3 non è stato configurato correttamente il controllo Multi-Factor Authentication per autorizzare la cancellazione dei dati.
+   \item \textbf{S3 server access logging is disabled:} Vulnerabilità rilevata in quanto nel bucket S3 non è stato configurato il logging degli accessi al server.
 \end{itemize}
 \begin{figure}[H]
    \centering
-   \includegraphics[width=0.6\textwidth]{immagini/capitolo2/snyk_iac.png}
+   \includegraphics[width=0.9\textwidth]{immagini/capitolo2/snyk_iac.png}
    \caption{Snyk: corretto riconoscimento della vulnerabilità public-read.}
    \label{fig:snyk_iac}
 \end{figure}
@@ -188,11 +188,11 @@ Questi errori non sono stati rilevati da Snyk, che però ha rilevato due possibi
 Durante il testing, sono state rilevate inoltre delle funzionalità presenti in uno dei due strumenti, ma non nell'altro. Le funzionalità sono descritte di seguito. Essendo uniche per ogni prodotto, non è stato possibile confrontarle direttamente.
 
 \subsection{Snyk: Monitoraggio Continuo}
-Snyk offre un monitoraggio continuo delle applicazioni e delle dipendenze, inviando notifiche in tempo reale in caso di nuove vulnerabilità che influenzano il codice già in uso. Questo assicura che i team possano reagire rapidamente a nuove minacce. Durante il testing, è stato possibile osservare il funzionamento di questa funzione, avendo ricevuto e-mail contenenti nuove vulnerabilità pubblicate solamente giorni prima, come riportato in Figura \ref{fig:snyk_email}.
+Snyk offre un monitoraggio continuo delle applicazioni e delle dipendenze, inviando notifiche in tempo reale in caso di nuove vulnerabilità che influenzano il codice già in uso. Questo assicura che i team possano reagire rapidamente a nuove minacce. Durante il testing, è stato possibile osservare il funzionamento di questa funzione, avendo ricevuto una e-mail contenente nuove vulnerabilità rese pubbliche solamente pochi giorni prima, come riportato in Figura \ref{fig:snyk_email}.
 
 \begin{figure}[H]
    \centering
-   \includegraphics[width=0.8\textwidth]{immagini/capitolo2/snyk_email.png}
+   \includegraphics[width=1\textwidth]{immagini/capitolo2/snyk_email.png}
    \caption{E-mail ricevuta da Snyk contenente notifica di rilevazione di nuove vulnerabilità}
    \label{fig:snyk_email}
 \end{figure}
