@@ -58,7 +58,7 @@ Trivy generalmente avvisa di un numero maggiore di vulnerabilità rispetto a Sny
 \subsubsection{Differenza nella classificazione delle stesse vulnerabilità}
 Gli strumenti hanno riportato, in molti casi, una differenza nelle classificazioni delle stesse vulnerabilità. Questo è dovuto alla differenza di valutazione delle vulnerabilità da parte dei database utilizzati. In particolare, Snyk tende a classificare le vulnerabilità in modo più conservativo, assegnando un numero inferiore di vulnerabilità di livello critico e alto rispetto a Trivy. Ad esempio, per l'immagine \texttt{nginx:latest}, entrambi i tool hanno rilevato correttamente la vulnerabilità CVE-2023-6879, relativa ad un buffer overflow presente nella libreria \texttt{AOMedia}, ma mentre Trivy ha classificato la vulnerabilità come di livello critico, Snyk ha classificato la stessa come di livello basso. Questa differenza è dovuta alle sorgenti di informazioni di valutazione utilizzate dai due tool:
 \begin{itemize}
-   \item Trivy utilizza la classificazione NVD, che è nota per essere meno conservativa nella classificazione delle vulnerabilità, assegnando quindi un numero maggiore di vulnerabilità di livello critico o alto.
+   \item Trivy utilizza principalmente la gravità assegnata dal vendor. In caso essa non sia disponibile, si induce la gravità dal punteggio CVSS. In caso anch'esso non sia disponibile, viene usata la classificazione NVD.
    \item Snyk invece assegna la categoria in base a tre elementi di valutazione:
          \begin{itemize}
             \item L'analisi interna condotta dal team di Snyk.
@@ -154,8 +154,8 @@ Eseguendo la scansione del codice soprastante con entrambi gli strumenti, sono s
    \end{tabularx}
 \end{center}
 
-Tra le vulnerabilità rilevate, in entrambi i casi è stata rilevata la vulnerabilità desiderata. Su Snyk, la vulnerabilità è stata classificata come l'unica di livello medio. Trivy, invece, ha classificato la vulnerabilità come di livello alto. Questa differenza è dovuta alla diversa classificazione delle vulnerabilità da parte dei database utilizzati, come già discusso in precedenza.
-Le altre vulnerabilità di livello alto rilevate da Trivy sono state:
+Tra le vulnerabilità rilevate, in entrambi i casi è stata rilevata la vulnerabilità desiderata. Su Snyk, la vulnerabilità è stata classificata come l'unica di livello medio. Trivy, invece, ha classificato la vulnerabilità come di livello alto. Questa differenza è dovuta alla diversa classificazione delle vulnerabilità da parte dei database utilizzati, come già discusso in precedenza. Tali vulnerabilità sono descritte nelle Figure \ref{fig:trivy_iac} e \ref{fig:snyk_iac}.
+Inoltre, le altre vulnerabilità di livello alto rilevate da Trivy sono state:
 \begin{itemize}
    \item \textbf{Quattro vulnerabilità} molto simili tra loro, relative alla mancanza di ACLs sul bucket S3. (No public access block so not blocking public acls)
    \item \textbf{Bucket does not have encryption enabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente la cifratura dei dati.
@@ -166,7 +166,7 @@ Le altre vulnerabilità di livello alto rilevate da Trivy sono state:
 \begin{figure}[H]
    \centering
    \includegraphics[width=0.6\textwidth]{immagini/capitolo2/trivy_iac.png}
-   \caption{Trivy: corretto riconoscimento della vulnerabilità public-read}
+   \caption{Trivy: corretto riconoscimento della vulnerabilità public-read.}
    \label{fig:trivy_iac}
 \end{figure}
 
@@ -174,8 +174,13 @@ Questi errori non sono stati rilevati da Snyk, che però ha rilevato due possibi
 \begin{itemize}
    \item \textbf{S3 bucket MFA delete control disabled:} Questa vulnerabilità è stata rilevata in quanto nel bucket S3 non è stato configurato correttamente il controllo Multi-Factor Authentication per prevenire la cancellazione dei dati.
    \item \textbf{S3 server access logging is disabled:} Questa vulnerabilità è stata rilevata in quanto il bucket S3 non ha configurato correttamente il logging degli accessi al server.
-
 \end{itemize}
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.6\textwidth]{immagini/capitolo2/snyk_iac.png}
+   \caption{Snyk: corretto riconoscimento della vulnerabilità public-read.}
+   \label{fig:snyk_iac}
+\end{figure}
 
 
 \section{Funzionalità uniche per ogni prodotto}
@@ -197,7 +202,13 @@ Dopo la ricezione della e-mail, è stata subito eseguita una scansione con Trivy
 Essendo un tool completamente open source, Trivy ha la capacità di poter essere utilizzato in ambienti completamente isolati, senza la necessità di connessione a Internet. Questo è possibile grazie alla possibilità di scaricare il database di vulnerabilità in locale, e di eseguire le scansioni utilizzando il database locale. Questa funzionalità è particolarmente utile in ambienti ad alta sicurezza, dove la connessione a Internet è limitata o non disponibile. Snyk, invece, richiede sempre una connessione a Internet per poter funzionare correttamente, necessitando di contattare la propria API per eseguire la vera e propria scansione.
 
 \subsection{Snyk: Creazione Automatica di Pull Request}
-Snyk offre la possibilità di creare automaticamente pull request atte a correggere le vulnerabilità rilevate. Questa funzionalità è particolarmente utile per i team di sviluppo, in quanto permette di automatizzare il processo di correzione delle vulnerabilità, riducendo il tempo e lo sforzo necessario per applicare le correzioni.
+Snyk offre la possibilità di creare automaticamente pull request atte a correggere le vulnerabilità rilevate. Questa funzionalità è particolarmente utile per i team di sviluppo, in quanto permette di automatizzare il processo di correzione delle vulnerabilità, riducendo il tempo e lo sforzo necessario per applicare le correzioni. In Figura \ref{fig:snyk_pr} è possibile vedere un esempio di tale funzione.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{immagini/capitolo2/snyk_pr.png}
+   \caption{Esempio di pull request eseguita da Snyk}
+   \label{fig:snyk_pr}
+\end{figure}
 
 \subsection{Trivy: Scansione di Immagini VM}
 Un'ultima funzione unica di Trivy è quella di poter eseguire la scansione di immagini di macchine virtuali, oltre che di immagini di container. Tramite il comando \texttt{trivy vm}, è possibile scansionare:
@@ -216,4 +227,4 @@ In Figura \ref{fig:trivy_vm}, è riportato un esempio di scansione di un'immagin
 Tale funzionalità rimane, al momento della stesura del presente report, come funzionalità sperimentale e ancora in sviluppo.
 
 \section{Conclusioni}
-Il confronto svolto ha evidenziato punti di forza e aree di miglioramento per entrambi gli strumenti nella gestione delle vulnerabilità software. Trivy, con la capacità di essere più sensibile per un numero maggiore di vulnerabilità, si dimostra particolarmente efficace per gli ambienti che richiedono una scansione approfondita e dettagliata, anche a costo di una maggiore incidenza di falsi positivi. La sua funzionalità di scansione di immagini VM aggiunge un ulteriore strato di utilità, rendendolo adatto per ambienti che utilizzano una varietà di soluzioni di virtualizzazione. D'altra parte, Snyk si distingue per il suo approccio conservativo nella classificazione delle vulnerabilità, potenzialmente riducendo il rischio di allarmi non necessari, e offre un valore aggiunto significativo con il suo monitoraggio continuo, assicurando che le applicazioni siano protette contro le nuove vulnerabilità non appena vengono scoperte.
+Il confronto svolto ha evidenziato punti di forza e aree di miglioramento per entrambi gli strumenti nella gestione delle vulnerabilità software. Trivy, con la capacità di essere più sensibile per un numero maggiore di vulnerabilità, si dimostra particolarmente efficace per gli ambienti che richiedono una scansione approfondita e dettagliata, anche a costo di una maggiore incidenza di falsi positivi. La sua funzionalità di scansione di immagini VM aggiunge un ulteriore strato di utilità, rendendolo adatto per ambienti che utilizzano una varietà di soluzioni di virtualizzazione. D'altra parte, Snyk si distingue per il suo approccio conservativo nella classificazione delle vulnerabilità, potenzialmente riducendo il rischio di allarmi non necessari, e offre un valore aggiunto significativo con il suo monitoraggio continuo, assicurando che le applicazioni siano protette contro le nuove vulnerabilità non appena vengono scoperte. La scelta finale tra i due strumenti andrebbe eseguita considerando l'ambiente di utilizzo, la grandezza del team di sviluppo ed eventualmente anche alla disponibilità di personale assegnato alla cybersicurezza. Snyk, infatti, è capace di far nascondere al team di sviluppo i processi più manuali, come quelli di aggiornamento delle dipendenze o
