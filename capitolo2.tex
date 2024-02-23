@@ -8,12 +8,12 @@ Sulla base di ciò, possono quindi nascere due nuove classificazioni di vulnerab
 
 \begin{itemize}
    \item \textbf{Vulnerabilità ereditate}: vulnerabilità presenti nella base image utilizzata per costruire l'immagine Docker.
-   \item \textbf{Vulnerabilità di base}: vulnerabilità presenti nei pacchetti e nelle librerie installate dall'utente nell'immagine Docker.
+   \item \textbf{Vulnerabilità installate}: vulnerabilità presenti nei pacchetti e nelle librerie installate dall'utente nell'immagine Docker.
 \end{itemize}
 È quindi necessario categorizzare le vulnerabilità in base alla loro origine, perché il modo in cui esse devono essere affrontate è differente.
 \begin{itemize}
    \item Le vulnerabilità ereditate richiedono una modifica della base image. Per risolverle, potrebbe essere necessario aggiornare la base image, o sostituirla con una versione alternativa. Quest'ultimo processo può essere complesso e dispendioso, in quanto può richiedere la modifica della pipeline di sviluppo e la verifica della compatibilità tra l'applicazione esistente e la nuova base image.
-   \item Le vulnerabilità di base possono essere corrette più facilmente, tipicamente aggiornando i pacchetti e le librerie installate all'interno dell'immagine. Questo processo è generalmente più semplice e meno dispendioso rispetto alla correzione delle vulnerabilità ereditate.
+   \item Le vulnerabilità installate possono essere corrette più facilmente, tipicamente aggiornando i pacchetti e le librerie installate all'interno dell'immagine. Questo processo è generalmente più semplice e meno dispendioso rispetto alla correzione delle vulnerabilità ereditate.
 \end{itemize}
 
 
